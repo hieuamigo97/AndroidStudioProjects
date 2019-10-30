@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -51,10 +52,15 @@ class PongGame extends SurfaceView implements Runnable {
         mOurHolder = getHolder();
         mPaint = new Paint();
 
+        mBall = new Ball(mScreenX);
+        mBat = new Bat(mScreenX,mScreenY);
+
         startNewGame();
     }
 
     private void startNewGame(){
+        mBall.reset(mScreenX, mScreenY);
+
         mScore = 0;
         mLives = 3;
     }
@@ -66,6 +72,9 @@ class PongGame extends SurfaceView implements Runnable {
             mCanvas.drawColor(Color.argb(255,16,128,182));
 
             mPaint.setColor(Color.argb(255,255,255,255));
+
+            mCanvas.drawRect(mBall.getRect(),mPaint);
+            mCanvas.drawRect(mBall.getRect(),mPaint);
 
             mPaint.setTextSize(mFontSize);
 
@@ -86,6 +95,30 @@ class PongGame extends SurfaceView implements Runnable {
         mPaint.setTextSize(debugSize);
         mCanvas.drawText("FPS" + mFPS, 10,
                 debugStart + debugSize, mPaint);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent motionEvent){
+        switch(motionEvent.getAction() & MotionEvent.ACTION_MASK){
+            case MotionEvent.ACTION_DOWN:
+                mPaused = false;
+
+                if(motionEvent.getX() > mScreenX/2){
+                    mBat.setMovementState(mBat.RIGHT);
+                }
+                else{
+                    mBat.setMovementState(mBat.LEFT);
+                }
+
+                break;
+
+            case MotionEvent.ACTION_UP:
+
+                mBat.setMovementState(mBat.STOPPED);
+                break;
+        }
+
+        return true;
     }
 
     @Override
@@ -117,6 +150,9 @@ class PongGame extends SurfaceView implements Runnable {
     }
 
     private void update(){
+        mPaused = false;
+        mBall.update(mFPS);
+        mBat.update(mFPS);
 
     }
 
