@@ -30,7 +30,7 @@ class Ball {
         mRect.bottom = mRect.top + mBallHeight;
     }
 
-    void reverseYVlocity(){
+    void reverseYVelocity(){
         mYVelocity = -mYVelocity;
     }
 
@@ -71,6 +71,6 @@ class Ball {
             mXVelocity = -Math.abs(mXVelocity);
         }
 
-        reverseYVlocity();
+        reverseYVelocity();
     }
 }
